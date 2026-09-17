@@ -1,4 +1,6 @@
 datasets/
-75_ML_Results/
+catboost_info/
 __pycache__/
 *.pyc
+venv/
+.venv/

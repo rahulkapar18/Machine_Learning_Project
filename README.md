@@ -4,13 +4,13 @@
 
 This project performs an automated machine learning experiment on network traffic data.
 
-The objective is to compare **five classification algorithms** under different **train-test split sizes** and **PCA dimensionality-reduction settings**.
+The objective is to evaluate **five classification algorithms** under different **train-test split sizes** and **PCA dimensionality-reduction settings**.
 
 The complete experiment generates:
 
-* **75 machine learning experiments**
-* **75 JPG result reports**
-* **1 CSV file containing all experiment metrics**
+* 75 machine learning experiments
+* 75 JPG result reports
+* 1 CSV file containing all experiment metrics
 * Confusion matrices
 * Accuracy
 * Precision
@@ -22,47 +22,49 @@ The complete experiment generates:
 
 ## Project Overview
 
-The project combines three network traffic datasets and uses the last column as the target variable.
+The project uses network traffic datasets from the CICIDS2017 dataset collection.
 
 The workflow is:
 
 ```text
-Dataset
-   ↓
-Combine 3 CSV files
-   ↓
-Clean column names
-   ↓
-Convert features to numeric
-   ↓
-Replace infinite values
-   ↓
-Handle missing values
-   ↓
-Encode target labels
-   ↓
-Stratified sampling
-   ↓
+Network Traffic Dataset
+        ↓
+Load Multiple CSV Files
+        ↓
+Combine Datasets
+        ↓
+Clean Column Names
+        ↓
+Convert Features to Numeric
+        ↓
+Replace Infinite Values
+        ↓
+Handle Missing Values
+        ↓
+Encode Target Labels
+        ↓
+Stratified Sampling
+        ↓
 Train/Test Split
-   ↓
+        ↓
 PCA
-   ↓
+        ↓
 5 Machine Learning Algorithms
-   ↓
+        ↓
 Prediction
-   ↓
+        ↓
 Evaluation
-   ↓
-JPG Report + CSV Results
+        ↓
+JPG Reports + CSV Results
 ```
 
 ---
 
-## Algorithms Used
+# Algorithms Used
 
-The project compares the following five classification algorithms.
+The project compares five classification algorithms.
 
-### 1. CatBoost
+## 1. CatBoost
 
 CatBoost is a gradient-boosting algorithm based on decision trees.
 
@@ -76,7 +78,9 @@ CatBoostClassifier(
 )
 ```
 
-### 2. AdaBoost
+---
+
+## 2. AdaBoost
 
 AdaBoost is an ensemble learning algorithm that combines multiple weak learners to create a stronger classifier.
 
@@ -86,9 +90,11 @@ AdaBoostClassifier(
 )
 ```
 
-### 3. K-Nearest Neighbors
+---
 
-KNN classifies a sample based on the classes of its nearest neighboring samples.
+## 3. K-Nearest Neighbors
+
+K-Nearest Neighbors (KNN) classifies a sample based on the classes of its nearest neighboring samples.
 
 ```python
 KNeighborsClassifier(
@@ -97,7 +103,9 @@ KNeighborsClassifier(
 )
 ```
 
-### 4. Gaussian Naive Bayes
+---
+
+## 4. Gaussian Naive Bayes
 
 Gaussian Naive Bayes is a probabilistic classification algorithm based on Bayes' theorem.
 
@@ -105,7 +113,9 @@ Gaussian Naive Bayes is a probabilistic classification algorithm based on Bayes'
 GaussianNB()
 ```
 
-### 5. Support Vector Machine
+---
+
+## 5. Support Vector Machine
 
 The project uses a linear Support Vector Machine through `LinearSVC`.
 
@@ -117,13 +127,15 @@ LinearSVC(
 )
 ```
 
-`LinearSVC` is used instead of the general `SVC` implementation because the original dataset contains a very large number of samples.
+`LinearSVC` is used instead of the general `SVC` implementation because the dataset contains a large number of samples.
 
 ---
 
 # Dataset
 
-The project combines three CSV datasets:
+The project uses network traffic data from the **CICIDS2017 dataset**.
+
+The main experiment uses the following three files:
 
 ```text
 Tuesday-WorkingHours.pcap_ISCX.csv
@@ -141,9 +153,9 @@ The combined dataset used during development contains approximately:
 11 target classes
 ```
 
-### Target Classes
+## Target Classes
 
-The target classes include network traffic categories such as:
+The target classes include:
 
 ```text
 BENIGN
@@ -159,7 +171,7 @@ Web Attack – Sql Injection
 Web Attack – XSS
 ```
 
-> Dataset files are not included in this repository if they are too large for GitHub. Place the required CSV files in the project directory before running the program.
+> **Note:** The original CSV datasets are very large and are not included in this GitHub repository. Place the required CSV files inside the `datasets/` directory before running the program.
 
 ---
 
@@ -167,9 +179,9 @@ Web Attack – XSS
 
 Several preprocessing steps are performed automatically.
 
-## 1. Combine datasets
+## 1. Combine Datasets
 
-The three CSV files are combined using:
+Multiple CSV files are loaded and combined using Pandas:
 
 ```python
 pd.concat()
@@ -177,7 +189,7 @@ pd.concat()
 
 ---
 
-## 2. Clean column names
+## 2. Clean Column Names
 
 Whitespace is removed from column names:
 
@@ -187,9 +199,9 @@ dataset.columns = dataset.columns.str.strip()
 
 ---
 
-## 3. Separate features and target
+## 3. Separate Features and Target
 
-The last column is used as the target:
+The last column is used as the target variable:
 
 ```python
 X = dataset.iloc[:, :-1]
@@ -198,7 +210,7 @@ y = dataset.iloc[:, -1]
 
 ---
 
-## 4. Convert features to numeric
+## 4. Convert Features to Numeric
 
 Non-numeric values are converted to missing values:
 
@@ -211,9 +223,9 @@ X = X.apply(
 
 ---
 
-## 5. Handle infinite values
+## 5. Handle Infinite Values
 
-Positive and negative infinity values are replaced with `NaN`.
+Positive and negative infinity values are replaced with `NaN`:
 
 ```python
 X.replace(
@@ -225,9 +237,9 @@ X.replace(
 
 ---
 
-## 6. Handle missing values
+## 6. Handle Missing Values
 
-Missing values are replaced using the mean of each feature.
+Missing values are replaced using the mean of each feature:
 
 ```python
 SimpleImputer(
@@ -237,9 +249,9 @@ SimpleImputer(
 
 ---
 
-## 7. Encode target labels
+## 7. Encode Target Labels
 
-The categorical target labels are converted into numerical values using:
+Categorical target labels are converted into numerical values using:
 
 ```python
 LabelEncoder()
@@ -248,9 +260,9 @@ LabelEncoder()
 For example:
 
 ```text
-BENIGN → 0
+BENIGN       → 0
 DoS GoldenEye → 1
-DoS Hulk → 2
+DoS Hulk     → 2
 ...
 ```
 
@@ -260,7 +272,7 @@ DoS Hulk → 2
 
 The original combined dataset contains approximately 1.3 million samples.
 
-Running 75 experiments directly on the entire dataset can require a very large amount of computational time, especially for algorithms such as KNN and SVM.
+Running 75 experiments on the complete dataset can require a large amount of computational time, especially for algorithms such as KNN and SVM.
 
 Therefore, the program uses a stratified sample:
 
@@ -268,7 +280,7 @@ Therefore, the program uses a stratified sample:
 MAX_EXPERIMENT_ROWS = 20000
 ```
 
-The sample is selected while preserving the approximate class distribution.
+The sample is selected while approximately preserving the original class distribution.
 
 ```python
 train_test_split(
@@ -279,7 +291,7 @@ train_test_split(
 )
 ```
 
-This means the experiment uses up to **20,000 samples** while maintaining class representation.
+This allows the experiments to use up to **20,000 samples** while maintaining class representation.
 
 ---
 
@@ -287,7 +299,7 @@ This means the experiment uses up to **20,000 samples** while maintaining class 
 
 Principal Component Analysis (PCA) is used for dimensionality reduction.
 
-The experiment tests five different PCA configurations:
+The experiment tests five PCA configurations:
 
 ```python
 PCA_COMPONENTS = [2, 4, 6, 8, 10]
@@ -303,7 +315,7 @@ Therefore, each algorithm is tested with:
 10 PCA components
 ```
 
-PCA is fitted only on the training data and then applied to the test data.
+PCA is fitted only on the training data and then applied to the test data:
 
 ```python
 X_train = pca.fit_transform(X_train_original)
@@ -311,7 +323,7 @@ X_train = pca.fit_transform(X_train_original)
 X_test = pca.transform(X_test_original)
 ```
 
-This avoids fitting PCA using the test data.
+This prevents the test data from being used when fitting PCA.
 
 ---
 
@@ -323,15 +335,13 @@ Three different test sizes are evaluated:
 TEST_SIZES = [0.2, 0.4, 0.6]
 ```
 
-This corresponds to:
-
 | Test Size | Training Data | Testing Data |
-| --------- | ------------: | -----------: |
-| 20%       |           80% |          20% |
-| 40%       |           60% |          40% |
-| 60%       |           40% |          60% |
+| --------: | ------------: | -----------: |
+|       20% |           80% |          20% |
+|       40% |           60% |          40% |
+|       60% |           40% |          60% |
 
-All splits use stratification:
+All train-test splits use stratification:
 
 ```python
 stratify=y
@@ -341,7 +351,7 @@ stratify=y
 
 # Experiment Structure
 
-There are:
+The experiment contains:
 
 ```text
 5 Algorithms
@@ -359,13 +369,13 @@ There are:
 5 × 3 × 5 = 75
 ```
 
-The program automatically runs all combinations.
+The program automatically runs every combination.
 
 ---
 
 # Evaluation Metrics
 
-Each experiment calculates four main metrics.
+Each experiment calculates four main evaluation metrics.
 
 ## Accuracy
 
@@ -380,19 +390,19 @@ Correct Predictions / Total Predictions
 
 ## Precision
 
-Precision measures how many samples predicted as a particular class were actually members of that class.
+Precision measures how many samples predicted as a particular class actually belong to that class.
 
 ---
 
 ## Recall
 
-Recall measures how many samples belonging to a class were correctly identified.
+Recall measures how many samples belonging to a particular class were correctly identified.
 
 ---
 
 ## F1 Score
 
-F1-score combines precision and recall.
+F1-score combines precision and recall:
 
 ```text
 F1 = 2 × (Precision × Recall)
@@ -408,7 +418,7 @@ The project uses **weighted averaging** for precision, recall, and F1-score.
 
 A confusion matrix is generated for every experiment.
 
-It shows:
+It shows the relationship between:
 
 ```text
 Actual Class
@@ -416,19 +426,19 @@ Actual Class
 Predicted Class
 ```
 
-The confusion matrix helps identify which network traffic classes are being correctly or incorrectly classified.
+The confusion matrix helps identify which network traffic classes are correctly or incorrectly classified.
 
 ---
 
 # Output Files
 
-All generated results are stored in:
+All experiment results are stored in:
 
 ```text
 75_ML_Results/
 ```
 
-Each experiment produces one JPG report.
+Each experiment generates one JPG report.
 
 Example:
 
@@ -440,9 +450,7 @@ Example:
 05_Support_Vector_Machine_Test_20_PCA_2.jpg
 ```
 
-The exact filenames are generated automatically by the program.
-
-Each JPG contains:
+Each JPG report contains:
 
 1. Confusion matrix
 2. Algorithm name
@@ -458,13 +466,13 @@ Each JPG contains:
 
 # CSV Results
 
-The program also generates:
+The program generates:
 
 ```text
 ALL_75_RESULTS.csv
 ```
 
-The CSV contains the results of all 75 experiments.
+This file contains the metrics from all 75 experiments.
 
 Example columns:
 
@@ -479,28 +487,23 @@ Recall
 F1 Score
 ```
 
-This CSV can be used for further analysis in:
+The CSV can be further analyzed using:
 
 * Excel
 * Pandas
 * Power BI
 * Tableau
-* Python visualization
+* Python visualization libraries
 
 ---
 
 # Project Structure
 
-Recommended GitHub repository structure:
-
 ```text
-Automated-ML-Experiment/
+PYTHON_MACHINE_LEARNING_PROJECT/
 │
-├── main.py
-│
-├── README.md
-│
-├── requirements.txt
+├── datasets/
+│   └── README.md
 │
 ├── 75_ML_Results/
 │   ├── 01_CatBoost_Test_20_PCA_2.jpg
@@ -509,21 +512,32 @@ Automated-ML-Experiment/
 │   ├── 75_*.jpg
 │   └── ALL_75_RESULTS.csv
 │
-├── .gitignore
+├── catboost_info/
 │
-└── datasets/
-    ├── Tuesday-WorkingHours.pcap_ISCX.csv
-    ├── Wednesday-workingHours.pcap_ISCX.csv
-    └── Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv
+├── Experiment_Results.xlsx
+│
+├── main.py
+│
+├── README.md
+│
+├── requirements.txt
+│
+└── .gitignore
 ```
 
-For large datasets, it is recommended to exclude the CSV files from GitHub using `.gitignore`.
+The large original dataset files are kept locally inside:
+
+```text
+datasets/
+```
+
+and excluded from GitHub using `.gitignore`.
 
 ---
 
 # Installation
 
-## 1. Clone the repository
+## 1. Clone the Repository
 
 ```bash
 git clone YOUR_GITHUB_REPOSITORY_URL
@@ -532,22 +546,20 @@ git clone YOUR_GITHUB_REPOSITORY_URL
 Move into the project directory:
 
 ```bash
-cd Automated-ML-Experiment
+cd PYTHON_MACHINE_LEARNING_PROJECT
 ```
 
 ---
 
-## 2. Create a virtual environment
+## 2. Create a Virtual Environment
 
-You can use either Anaconda or Python's built-in virtual environment.
-
-### Using Python
+Using Python:
 
 ```bash
 python -m venv venv
 ```
 
-Activate it on Windows:
+Activate the environment on Windows:
 
 ```powershell
 venv\Scripts\activate
@@ -557,13 +569,13 @@ venv\Scripts\activate
 
 # Install Required Libraries
 
-Install the required Python packages:
+Install the required packages:
 
 ```bash
 pip install numpy pandas matplotlib seaborn scikit-learn catboost
 ```
 
-Or install everything from `requirements.txt`:
+Or install all dependencies from:
 
 ```bash
 pip install -r requirements.txt
@@ -573,7 +585,11 @@ pip install -r requirements.txt
 
 # Running the Project
 
-Make sure the three dataset files are located in the same directory as the Python program.
+Place the required dataset files inside:
+
+```text
+datasets/
+```
 
 Then run:
 
@@ -581,7 +597,7 @@ Then run:
 python main.py
 ```
 
-The program will automatically:
+The program automatically:
 
 ```text
 Load datasets
@@ -590,7 +606,7 @@ Combine datasets
       ↓
 Clean data
       ↓
-Sample 20,000 rows
+Sample up to 20,000 rows
       ↓
 Create train/test splits
       ↓
@@ -598,20 +614,22 @@ Apply PCA
       ↓
 Train 5 algorithms
       ↓
+Make predictions
+      ↓
 Calculate metrics
       ↓
-Generate JPG
+Generate JPG reports
       ↓
-Repeat 75 times
+Repeat for 75 experiments
       ↓
-Create CSV
+Create CSV results
 ```
 
 ---
 
 # Expected Console Output
 
-The program displays the progress of every experiment.
+The program displays the progress of each experiment.
 
 Example:
 
@@ -658,7 +676,7 @@ EXPERIMENT 75/75
 
 # Machine Learning Concepts Demonstrated
 
-This project demonstrates several important machine learning concepts:
+This project demonstrates:
 
 * Data preprocessing
 * Missing-value imputation
@@ -686,9 +704,9 @@ This project demonstrates several important machine learning concepts:
 
 # Important Note About the Results
 
-The experiment uses a **stratified sample of up to 20,000 rows** from the combined dataset to make the 75-model experiment computationally manageable.
+The experiment uses a **stratified sample of up to 20,000 rows** from the combined dataset to make the 75-experiment workflow computationally manageable.
 
-Therefore, the results represent the performance of the models on this experimental sample and should not automatically be interpreted as results obtained from the entire original dataset.
+Therefore, the results represent model performance on this experimental sample and should not automatically be interpreted as performance on the entire original dataset.
 
 The random state is fixed:
 
@@ -702,19 +720,19 @@ This makes the sampling and train-test splits reproducible.
 
 # Future Improvements
 
-Possible improvements include:
+Possible future improvements include:
 
 * Testing additional classification algorithms
 * Hyperparameter tuning
 * Cross-validation
 * Feature selection
-* Comparing different PCA configurations
-* Visualization of algorithm performance
+* Comparing additional PCA configurations
+* Algorithm performance visualization
 * ROC-AUC analysis
 * Precision-recall curves
-* Automated result ranking
 * Interactive dashboards
-* Experiment tracking with MLflow
+* Automated experiment tracking
+* MLflow integration
 
 ---
 
