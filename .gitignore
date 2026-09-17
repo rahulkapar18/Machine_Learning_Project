@@ -1,20 +1,4 @@
-# ML generated results
-75_ML_Results*
-
-# Generated weekday result files
-Monday-*
-Tuesday-*
-Wednesday-*
-Thursday-*
-Friday-*
-
-# Python cache
+datasets/
+75_ML_Results/
 __pycache__/
 *.pyc
-
-# Jupyter
-.ipynb_checkpoints/
-
-# Virtual environments
-venv/
-.venv/
