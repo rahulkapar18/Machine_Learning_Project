@@ -71,35 +71,32 @@ print("=" * 70)
 print("LOADING DATASETS")
 print("=" * 70)
 
+DATASET_FOLDER = "datasets"
+
 df1 = pd.read_csv(
-    "Tuesday-WorkingHours.pcap_ISCX.csv",
+    os.path.join(
+        DATASET_FOLDER,
+        "Tuesday-WorkingHours.pcap_ISCX.csv"
+    ),
     low_memory=True
 )
 
 df2 = pd.read_csv(
-    "Wednesday-workingHours.pcap_ISCX.csv",
+    os.path.join(
+        DATASET_FOLDER,
+        "Wednesday-workingHours.pcap_ISCX.csv"
+    ),
     low_memory=True
 )
 
 df3 = pd.read_csv(
-    "Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv",
+    os.path.join(
+        DATASET_FOLDER,
+        "Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv"
+    ),
     low_memory=True
 )
 
-print(
-    "Tuesday rows   :",
-    len(df1)
-)
-
-print(
-    "Wednesday rows :",
-    len(df2)
-)
-
-print(
-    "Thursday rows  :",
-    len(df3)
-)
 
 
 # ============================================================
